@@ -11,7 +11,7 @@
     "dev:server": "cross-env NODE_ENV=development node server/server.js",
     "build": "npm run clear && npm run build:client && npm run build:server",
     "start": "node server/server.js",
-    "lint": "eslint --ext .js --ext .jsx client/*",
+    "lint": "eslint --ext .js --ext .jsx client/",
     "precommit": "npm run lint"
   },
   "author": "",
