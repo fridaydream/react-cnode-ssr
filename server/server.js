@@ -1,11 +1,10 @@
 const Koa = require('koa')
-
-const ReactSSR = require('react-dom/server')
 const fs = require('fs')
 const path = require('path')
 const mount = require('koa-mount');
 const bodyParser = require('koa-bodyparser')
 const session = require('koa-session');
+const serverRender = require('./util/server-render')
 const Router = require('koa-router');
 const isDev = process.env.NODE_ENV === 'development'
 const app = new Koa()
@@ -14,9 +13,8 @@ const router = new Router({
   prefix: '/api'
 });
 
-
 router.all('/user', require('./util/handle-login'))
-router.all('/:id', require('./util/proxy'))
+router.all('/:t/:id?', require('./util/proxy'))
 
 app
   .use(router.routes())
@@ -41,15 +39,13 @@ app.use(session(CONFIG, app));
 
 
 if(!isDev) {
-  const serverEntry = require('../dist/server-entry').default
-  const template = fs.readFileSync(path.join(__dirname, '../dist/index.html'),'utf8')
+  const serverEntry = require('../dist/server-entry')
+  const template = fs.readFileSync(path.join(__dirname, '../dist/server.ejs'),'utf8')
   app.use(mount('/public', async (ctx,next) => {
-    console.log(ctx.request.path)
     ctx.body = fs.readFileSync(path.join(__dirname, '../dist'+ctx.request.path))
   }));
-  app.use((ctx, next) => {
-    const appString = ReactSSR.renderToString(serverEntry)
-    ctx.body = template.replace('<!-- app -->', appString)
+  app.use(async (ctx, next) => {
+    await serverRender(serverEntry, template, ctx)
   })
 } else {
   const devStatic = require('./util/dev-static')

@@ -19,9 +19,7 @@ const config = {
         enforce: 'pre',
         test: /.(js|jsx)$/,
         loader: 'eslint-loader',
-        exclude: [
-          path.resolve(__dirname, '../node_modules')
-        ]
+        exclude: /(node_modules|bower_compontents)/
       },
       {
         test: /.jsx$/,
@@ -30,9 +28,7 @@ const config = {
       {
         test: /.js$/,
         loader: 'babel-loader',
-        exclude: [
-          path.join(__dirname, '../node-modules')
-        ]
+        exclude: /(node_modules|bower_compontents)/
       }
     ]
   },
@@ -41,6 +37,9 @@ const config = {
   },
   plugins: [
     new HTMLPlugin({
+        template: path.join(__dirname, '../client/template.html')
+    }),
+    new HTMLPlugin({
       template: '!!ejs-compiled-loader!' + path.join(__dirname, '../client/server.template.ejs'),
       filename: 'server.ejs'
     })
@@ -48,6 +47,7 @@ const config = {
 }
 
 if(isDev) {
+  config.devtool = '#cheap-module-eval-source-map'
   config.entry = {
     app: [
       'react-hot-loader/patch',
@@ -57,7 +57,7 @@ if(isDev) {
   config.devServer = {
     host: '0.0.0.0',
     port: '8889',
-    contentBase: path.join(__dirname, '../dist'),
+    // contentBase: path.join(__dirname, '../dist'),
     hot: true,
     overlay: {
       errors: true
@@ -65,6 +65,13 @@ if(isDev) {
     publicPath: '/public/',
     historyApiFallback: {
       index: '/public/index.html'
+    },
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:3333/',
+        changeOrigin: true
+        // pathRewrite: {'^/api': ''}
+      }
     }
   }
   config.plugins.push(new webpack.HotModuleReplacementPlugin())

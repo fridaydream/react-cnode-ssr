@@ -1,8 +1,8 @@
 
 const path = require('path')
 const webpack = require('webpack')
+const HTMLPlugin = require('html-webpack-plugin')
 const isDev = process.env.NODE_ENV === 'development'
-console.log('isDev', isDev)
 module.exports = {
   target: 'node',
   mode: isDev ? 'development': 'production',
@@ -21,9 +21,7 @@ module.exports = {
         enforce: 'pre',
         test: /.(js|jsx)$/,
         loader: 'eslint-loader',
-        exclude: [
-          path.resolve(__dirname, '../node_modules')
-        ]
+        exclude: /(node_modules|bower_compontents)/
       },
       {
         test: /.jsx$/,
@@ -32,18 +30,21 @@ module.exports = {
       {
         test: /.js$/,
         loader: 'babel-loader',
-        exclude: [
-          path.join(__dirname, '../node-modules')
-        ]
+        exclude: /(node_modules|bower_compontents)/
       }
     ]
   },
+  externals: Object.keys(require('../package.json').dependencies),
   resolve: {
     extensions: ['.js', '.jsx']
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(isDev?'development':'production')
+      'process.env':{
+        'NODE_ENV': JSON.stringify(isDev?'development':'production'),
+        'API_BASE': '"http://127.0.0.1:3333"'
+      },
+
     })
   ]
 }

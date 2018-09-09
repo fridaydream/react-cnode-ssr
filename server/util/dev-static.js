@@ -2,13 +2,11 @@ const axios = require('axios')
 const webpack = require('webpack')
 const path = require('path')
 const MemoryFs = require('memory-fs')
-const ReactDomServer = require('react-dom/server')
 const proxy = require('http-proxy-middleware')
-const ejs = require('ejs')
-const serialize = require('serialize-javascript')
-const asyncBootstrap = require('react-async-bootstrapper')
-const static = require('koa-static')
+const serverRender = require('./server-render')
+
 const serverConfig = require('../../build/webpack.config.server')
+
 const getTemplate = () => {
   return new Promise((resolve,reject) => {
     axios.get('http://localhost:8889/public/server.ejs')
@@ -19,10 +17,23 @@ const getTemplate = () => {
   })
 }
 const mfs = new MemoryFs
-const Module = module.constructor
+const NativeModule = require('module')
+const vm = require('vm')
+const getModuleFromString = (bundle, filename) => {
+  const m = { exports: {} }
+  const wrapper = NativeModule.wrap(bundle)
+  const script = new vm.Script(wrapper, {
+    filename,
+    displayErrors: true
+  })
+  const result = script.runInThisContext()
+  result.call(m.exports, m.exports, require, m)
+  return m
+}
+
 const serverCompiler = webpack(serverConfig)
 serverCompiler.outputFileSystem = mfs
-let serverBundle, createStoreMap
+let serverBundle
 serverCompiler.watch({}, (err, stats) => {
   if(err) throw err;
   stats = stats.toJson()
@@ -33,18 +44,10 @@ serverCompiler.watch({}, (err, stats) => {
     serverConfig.output.filename
   )
   const bundle = mfs.readFileSync(bundlePath, 'utf8')
-  const m = new Module()
-  m._compile(bundle, 'server-entry.js')
-  serverBundle = m.exports.default
-  createStoreMap = m.exports.createStoreMap
-})
 
-const getStoreState = (stores) => {
-  return Object.keys(stores).reduce((result, storeName) => {
-    result[storeName] = stores[storeName].toJson()
-    return result
-  }, {})
-}
+  const m = getModuleFromString(bundle, 'server-entry.js')
+  serverBundle = m.exports
+})
 
 module.exports = (app) => {
   app.use(async (ctx, next) => {
@@ -61,26 +64,13 @@ module.exports = (app) => {
     }
     return next()
   })
-  // 指定静态资源文件夹
-  // app.use(static(path.join(__dirname, './dist')))
+
   app.use(async (ctx, next) => {
-    const template = await getTemplate()
-    const routerContext = {}
-    const stores = createStoreMap()
-    const app = serverBundle(stores, routerContext, ctx.request.url)
-    await asyncBootstrap(app)
-    if(routerContext.url) {
-      ctx.redirect(routerContext.url)
-      ctx.body=''
-      return
+    try{
+      const template = await getTemplate()
+      await serverRender(serverBundle, template, ctx)
+    }catch(e) {
+      next()
     }
-    const state = getStoreState(stores)
-    const content = ReactDomServer.renderToString(app)
-    console.log(stores.appState.count)
-    const html = ejs.render(template, {
-      appString: content,
-      initialState: serialize(state)
-    })
-    ctx.body = html
   })
 }
