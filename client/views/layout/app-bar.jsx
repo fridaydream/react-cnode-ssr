@@ -1,6 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
+import {
+  inject,
+  observer
+} from 'mobx-react'
 
 import AppBar from '@material-ui/core/AppBar'
 import ToolBar from '@material-ui/core/Toolbar'
@@ -17,7 +21,17 @@ const styles = {
     flex: 1
   }
 }
+
+@inject((stores) => {
+  return {
+    appState: stores.appState
+  }
+}) @observer
 class MainAppBar extends React.Component {
+  static contextTypes = {
+    router: PropTypes.object
+  }
+
   constructor() {
     super()
     this.onHomeIconClick = this.onHomeIconClick.bind(this)
@@ -25,22 +39,27 @@ class MainAppBar extends React.Component {
     this.loginButtonClick = this.loginButtonClick.bind(this)
   }
 
-  /* eslint-disable */
   onHomeIconClick() {
-
+    this.context.router.history.push('/list?tab=all')
   }
 
   createButtonClick() {
-
+    this.context.router.history.push('/topic/create')
   }
 
   loginButtonClick() {
-
+    if (this.props.appState.user.isLogin) {
+      this.context.router.history.push('/user/info')
+    } else {
+      this.context.router.history.push('/user/login')
+    }
   }
-  /* eslint-enable */
 
   render() {
     const { classes } = this.props
+    const {
+      user
+    } = this.props.appState
     return (
       <div className={classes.root}>
         <AppBar position="fixed" color="secondary">
@@ -55,13 +74,19 @@ class MainAppBar extends React.Component {
               新建话题
             </Button>
             <Button color="inherit" onClick={this.loginButtonClick}>
-              登录
+              {
+                user.isLogin ? user.info.loginname : '登录'
+              }
             </Button>
           </ToolBar>
         </AppBar>
       </div>
     )
   }
+}
+
+MainAppBar.wrappedComponent.propTypes = {
+  appState: PropTypes.object.isRequired
 }
 
 MainAppBar.propTypes = {

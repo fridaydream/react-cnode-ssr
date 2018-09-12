@@ -1,25 +1,27 @@
 const axios = require('axios')
 const qs = require('qs')
-const baseUrl = 'http://cnodejs.org/api/v1'
+const baseUrl = 'https://cnodejs.org/api/v1'
 module.exports = async (ctx, next) => {
   const path = ctx.request.path.slice(4)
   console.log('path', path)
   const user = ctx.session.user || {}
-  const needAccessToken = ctx.request.needAccessToken
-
-  if(needAccessToken && !user.accessToken) {
+  const needAccessToken = ctx.request.query.needAccessToken
+  console.log(user)
+  console.log(needAccessToken)
+  if(needAccessToken && !user.accesstoken) {
     ctx.status = 401
     ctx.body = {
       success: false,
       msg: 'need login'
     }
+    return
   }
 
   const query = Object.assign({}, ctx.request.query,{
     accesstoken: (needAccessToken && ctx.request.method === 'GET') ? user.accesstoken : ''
   })
   const data = Object.assign({}, ctx.request.body, {
-    accesstoken: (needAccessToken && ctx.request.method === 'POST')? user.accessToken : ''
+    accesstoken: (needAccessToken && ctx.request.method === 'POST')? user.accesstoken : ''
   })
   if (query.needAccessToken) delete query.needAccessToken;
   try {

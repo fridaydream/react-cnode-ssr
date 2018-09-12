@@ -21,7 +21,11 @@ module.exports = (bundle, template, ctx) => {
     const createApp = bundle.default
     const routerContext = {}
     const stores = createStoreMap()
-
+    const user = ctx.session.user
+    if (user) {
+      stores.appState.user.info = user
+      stores.appState.user.isLogin = true
+    }
     // Create a sheetsRegistry instance.
     const sheetsRegistry = new SheetsRegistry();
     // Create a theme instance.

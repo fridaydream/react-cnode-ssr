@@ -8,20 +8,8 @@ const serverRender = require('./util/server-render')
 const Router = require('koa-router');
 const isDev = process.env.NODE_ENV === 'development'
 const app = new Koa()
-app.use(bodyParser())
-const router = new Router({
-  prefix: '/api'
-});
-
-router.all('/user', require('./util/handle-login'))
-router.all('/:t/:id?', require('./util/proxy'))
-
-app
-  .use(router.routes())
-  .use(router.allowedMethods());
 
 app.keys = ['some secret hurr'];
-
 const CONFIG = {
   key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
   /** (number || 'session') maxAge in ms (default is 1 days) */
@@ -36,6 +24,21 @@ const CONFIG = {
 };
 
 app.use(session(CONFIG, app));
+
+app.use(bodyParser())
+const router = new Router({
+  prefix: '/api'
+});
+
+router.post('/user/login', require('./util/handle-login'))
+// router.all('/user/:id?', require('./util/handle-login'))
+router.all('/:t/:id?/:reply?', require('./util/proxy'))
+
+app
+  .use(router.routes())
+  .use(router.allowedMethods());
+
+
 
 
 if(!isDev) {

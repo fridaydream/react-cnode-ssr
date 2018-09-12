@@ -11,5 +11,5 @@
     "NODE_ENV": "development"
   },
   "verbose": true,
-  "ext": "js"
+  "ext": ".js"
 }

@@ -34,7 +34,7 @@ export const topicDetailStyle = (theme) => {
       marginBottom: 24
     },
     notLoginButton: {
-      textAlgin: 'center',
+      textAlign: 'center',
       padding: '20px 0'
     },
     '@media screen and (max-width: 480px)': {

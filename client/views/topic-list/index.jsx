@@ -44,11 +44,12 @@ export default class TopicList extends React.Component {
   }
 
   asyncBootstrap() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        this.props.appState.count = 3
-        resolve(true)
-      })
+    const query = queryString.parse(this.props.location.search)
+    const { tab } = query
+    return this.props.topicStore.fetchTopics(tab || 'all').then(() => {
+      return true
+    }).catch(() => {
+      return false
     })
   }
 
@@ -80,7 +81,12 @@ export default class TopicList extends React.Component {
     const topicList = topicStore.topics
     const syncingTopics = topicStore.syncing
     const tab = this.getTab()
-
+    const {
+      createdTopics
+    } = topicStore
+    const {
+      user
+    } = this.props.appState
     return (
       <Container>
         <Helmet>
@@ -94,6 +100,27 @@ export default class TopicList extends React.Component {
             ))
           }
         </Tabs>
+        {
+          createdTopics && createdTopics.length > 0 ? (
+            <List style={{ backgroundColor: '#dfdfdf' }}>
+              {
+                createdTopics.map((topic) => {
+                  topic = Object.assign({}, topic, {
+                    author: user.info
+                  })
+                  return (
+                    <TopicListItem
+                      onClick={() => { this.listItemClick(topic) }}
+                      topic={topic}
+                      key={topic.id}
+                    />
+                  )
+                })
+              }
+            </List>
+          ) : null
+        }
+
         <List>
           {
             topicList.map(topic => (
