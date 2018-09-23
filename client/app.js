@@ -25,7 +25,7 @@ const createApp = (TheApp) => {
     componentDidMount() {
       const jssStyles = document.getElementById('jss-server-side');
       if (jssStyles && jssStyles.parentNode) {
-        console.log('remove') //eslint-disable-line
+        console.log('remove') // eslint-disable-line
         jssStyles.parentNode.removeChild(jssStyles);
       }
     }

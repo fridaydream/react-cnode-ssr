@@ -19,6 +19,7 @@ function getRequest(baseUrl, path, ctx, query, data) {
 module.exports = async (ctx, next) => {
   const path = ctx.request.path.slice(4)
   const user = ctx.session.user || {}
+  console.log('user', user)
   const needAccessToken = ctx.request.query.needAccessToken
   if(needAccessToken && !user.accesstoken) {
     ctx.status = 401

@@ -48,7 +48,6 @@ module.exports = async (bundle, template, ctx) => {
   const helmet = Helmet.rewind()
   const state = getStoreState(stores)
   const content = ReactDomServer.renderToString(app)
-  console.log('link', helmet.link.toString())
   const html = ejs.render(template, {
     appString: content,
     initialState: serialize(state),

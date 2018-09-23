@@ -49,6 +49,15 @@ class TopicDetail extends React.Component {
     this.props.topicStore.getTopicDetail(id)
   }
 
+  bootstrap() {
+    const id = this.getTopicId()
+    return this.props.topicStore.getTopicDetail(id).then(() => {
+      return true
+    }).catch(() => {
+      return false
+    })
+  }
+
   getTopicId() {
     return this.props.match.params.id
   }

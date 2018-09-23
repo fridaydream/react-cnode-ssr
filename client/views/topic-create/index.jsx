@@ -1,5 +1,4 @@
 import React from 'react'
-// import SimpleMDE from 'react-simplemde-editor'
 import PropTypes from 'prop-types'
 import {
   inject,
@@ -13,9 +12,11 @@ import IconReply from '@material-ui/icons/Reply'
 import SnackBar from '@material-ui/core/Snackbar'
 import { withStyles } from '@material-ui/core/styles'
 
+import SimpleMDE from 'react-simplemde-editor';
 import Container from '../layout/container'
 import createStyles from './styles'
 import { tabs } from '../../util/variable-define'
+
 
 @inject((stores) => {
   return {
@@ -124,15 +125,17 @@ class TopicCreate extends React.Component {
             onChange={this.handleTitleChange}
             fullWidth
           />
-          {/* <SimpleMDE
+          <SimpleMDE
+            id="samplemdeCreateTopic"
             onChange={this.handleContentChange}
             value={this.state.newReply}
+            className="samplemdeCreateTopic"
             options={{
               toolbar: false,
               spellChecker: false,
               placeholder: '发表你的精彩意见'
             }}
-          /> */}
+          />
           <div>
             {
               Object.keys(tabs).map((tab) => {

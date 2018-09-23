@@ -3,7 +3,7 @@ const path = require('path')
 const HTMLPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
 const webpackMerge = require('webpack-merge')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const baseConfig = require('./webpack.base')
 const isDev = process.env.NODE_ENV === 'development'
 const config = webpackMerge(baseConfig, {
@@ -84,8 +84,7 @@ if(isDev) {
           name: 'vendor',
           test: 'vendor',
           enforce: true
-        },
-
+        }
       },
     },
     namedModules: true,
