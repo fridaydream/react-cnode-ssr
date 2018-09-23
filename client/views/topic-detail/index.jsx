@@ -43,10 +43,12 @@ class TopicDetail extends React.Component {
     this.doReply = this.doReply.bind(this)
   }
 
-  componentWillMount() {
-    // do something
+  componentDidMount() {
     const id = this.getTopicId()
-    this.props.topicStore.getTopicDetail(id)
+    console.log('component did mount id:', id) // eslint-disable-line
+    this.props.topicStore.getTopicDetail(id).catch((err) => {
+      console.log('detail did mount error:', err) // eslint-disable-line
+    })
   }
 
   bootstrap() {
@@ -153,6 +155,8 @@ class TopicDetail extends React.Component {
                 <SimpleMDE
                   onChange={this.handleNewReplyChange}
                   value={this.state.newReply}
+                  id="samplemdeReplyTopic"
+                  className="samplemdeReplyTopic"
                   options={{
                     toolbar: false,
                     autoFocus: false,

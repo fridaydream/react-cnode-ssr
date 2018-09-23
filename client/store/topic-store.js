@@ -111,9 +111,11 @@ class TopicStore {
 
   @action getTopicDetail(id) {
     return new Promise((resolve, reject) => {
+      console.log('this.detailMap[id]', this.detailMap[id]) // eslint-disable-line
       if (this.detailMap[id]) {
         resolve(this.detailMap[id])
       } else {
+        console.log('get request')  // eslint-disable-line
         get(`/topic/${id}`, {
           mdrender: false
         }).then((resp) => {

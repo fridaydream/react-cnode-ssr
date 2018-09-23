@@ -59,6 +59,8 @@ if(!isDev) {
   devStatic(app)
 }
 
-app.listen('3333',() => {
-  console.log('server is listening on 3333')
+const host = '0.0.0.0'
+const port = process.PORT || '3333'
+app.listen(port, host, () => {
+  console.log(`server is listening on ${port}`)
 })

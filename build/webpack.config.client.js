@@ -71,7 +71,7 @@ if(isDev) {
     ]
   }
   config.output = {
-    publicPath: '/public/',
+    publicPath: 'https://iuap-tenat-market.oss-cn-beijing.aliyuncs.com/',
     filename: '[name].[chunkhash].js',
     chunkFilename: '[name].[chunkhash].js'
   }
@@ -84,6 +84,11 @@ if(isDev) {
           name: 'vendor',
           test: 'vendor',
           enforce: true
+        },
+        commons: {
+          name: "commons",
+          chunks: "initial",
+          minChunks: 2
         }
       },
     },

@@ -1,0 +1,13 @@
+{
+  "apps": [
+    {
+      "name": "my_web",
+      "script": "./server/server.js",
+      "instances": 1,
+      "exec_mode": "cluster",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}

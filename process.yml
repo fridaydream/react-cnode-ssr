@@ -1,0 +1,8 @@
+apps:
+  - script: ./server/server.js
+    name: cpnode
+    env:
+      NODE_ENV: production
+    env_production:
+      NODE_ENV: production
+      HOST: localhost
