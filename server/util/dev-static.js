@@ -51,15 +51,12 @@ serverCompiler.watch({}, (err, stats) => {
 
 module.exports = (app) => {
   app.use(async (ctx, next) => {
-    if(ctx.url.startsWith('/public')) {    // 以api开头的异步请求接口都会被转发
-        ctx.respond = false
+    if(ctx.url.startsWith('/public')) {    // 以public开头的异步请求接口都会被转发
+      ctx.respond = false // 必须
         return proxy({
             target: 'http://localhost:8889/', // 服务器地址
             changeOrigin: true,
-            secure: false,
-            // pathRewrite: {
-            //     '^/api' : '/webapp/api'
-            // }
+            secure: false
         })(ctx.req, ctx.res, next)
     }
     return next()
@@ -67,10 +64,13 @@ module.exports = (app) => {
 
   app.use(async (ctx, next) => {
     try{
+      if (!serverBundle) {
+        return ctx.body = 'waiting for compile, refresh later'
+      }
       const template = await getTemplate()
       await serverRender(serverBundle, template, ctx)
     }catch(e) {
-      next()
+      await next()
     }
   })
 }

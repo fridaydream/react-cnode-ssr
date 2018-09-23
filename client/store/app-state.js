@@ -1,6 +1,5 @@
 import {
   observable,
-  // computed,
   action,
   toJS
 } from 'mobx'

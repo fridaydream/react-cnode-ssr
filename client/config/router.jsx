@@ -49,7 +49,7 @@ PrivateRoute.defaultProps = {
 
 export default () => [
   <Route path="/" exact render={() => <Redirect to="/list" />} key="home" />,
-  <Route path="/list" component={TopicList} key="list" />,
+  <Route path="/list" exact component={TopicList} key="topiclist" />,
   <Route path="/detail/:id" component={TopicDetail} key="detail" />,
   <Route path="/user/login" component={UserLogin} exact key="login" />,
   <InjectedPrivateRoute path="/user/info" component={UserInfo} key="info" />,

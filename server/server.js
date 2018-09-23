@@ -30,16 +30,20 @@ const router = new Router({
   prefix: '/api'
 });
 
-router.post('/user/login', require('./util/handle-login'))
-// router.all('/user/:id?', require('./util/handle-login'))
-router.all('/:t/:id?/:reply?', require('./util/proxy'))
+// router.post('/user/login', require('./util/handle-login'))
+// // router.all('/user/:id?', require('./util/handle-login'))
+// router.all('/:t/:id?/:reply?', require('./util/proxy'))
 
+router.post('/user/login', require('./util/handle-login'))
+router.get('/topics', require('./util/proxy'))
+router.post('/topics', require('./util/proxy'))
+router.get('/topic/:id', require('./util/proxy'))
+router.get('/user/:id', require('./util/proxy'))
+router.get('/topic_collect/:id', require('./util/proxy'))
+router.post('/topic/:id/replies', require('./util/proxy'))
 app
   .use(router.routes())
   .use(router.allowedMethods());
-
-
-
 
 if(!isDev) {
   const serverEntry = require('../dist/server-entry')

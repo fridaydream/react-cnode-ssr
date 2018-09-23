@@ -6,21 +6,86 @@ import {
 import PropTypes from 'prop-types'
 import Helmet from 'react-helmet'
 import queryString from 'query-string'
+
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import List from '@material-ui/core/List'
 import CircularProgress from '@material-ui/core/CircularProgress';
+
+import ListItem from '@material-ui/core/ListItem'
+// import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemText from '@material-ui/core/ListItemText'
+import Avatar from '@material-ui/core/Avatar'
+import { withStyles } from '@material-ui/core/styles'
+
+import dateFormat from 'dateformat'
+import cx from 'classnames'
 import Container from '../layout/container'
-import TopicListItem from './list-item'
-import { AppState } from '../../store/store';
+// import TopicListItem from './list-item'
+// import { AppState } from '../../store/store';
 
 import { tabs } from '../../util/variable-define'
+
+import {
+  topicPrimaryStyle,
+  topicSecondaryStyle,
+} from './styles'
+
+const getTab = (tab, isTop, isGood) => {
+  return isTop ? '置顶' : (isGood ? '精品' : tab) // eslint-disable-line
+}
+
+const TopicPrimary = (props) => {
+  const { topic, classes } = props
+  const isTop = topic.top
+  const isGood = topic.good
+  const classNames = cx([classes.tab, isTop ? classes.top : '', isGood ? classes.good : ''])
+  return (
+    <div className={classes.root}>
+      <span
+        className={classNames}
+      >
+        {getTab(tabs[topic.tab], isTop, isGood)}
+      </span>
+      <span>{topic.title}</span>
+    </div>
+  )
+}
+
+const TopicSecondary = ({ classes, topic }) => (
+  <span className={classes.root}>
+    <span className={classes.userName}>{topic.author.loginname}</span>
+    <span className={classes.count}>
+      <span className={classes.accentColor}>{topic.reply_count}</span>
+      <span>/</span>
+      <span>{topic.visit_count}</span>
+    </span>
+    <span>
+      创建时间：
+      {dateFormat(topic.create_at, 'yyyy-mm-dd')}
+    </span>
+  </span>
+)
+
+TopicPrimary.propTypes = {
+  topic: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
+}
+
+TopicSecondary.propTypes = {
+  topic: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
+}
+
+const StyledPrimary = withStyles(topicPrimaryStyle)(TopicPrimary)
+const StyledSecondary = withStyles(topicSecondaryStyle)(TopicSecondary)
+
 @inject(stores => ({
   appState: stores.appState,
-  topicStore: stores.topicStore
+  topicStore: stores.topicStore,
 })) @observer
 
-export default class TopicList extends React.Component {
+class TopicList extends React.Component {
   static contextTypes = {
     router: PropTypes.object
   }
@@ -43,7 +108,7 @@ export default class TopicList extends React.Component {
     }
   }
 
-  asyncBootstrap() {
+  bootstrap() {
     const query = queryString.parse(this.props.location.search)
     const { tab } = query
     return this.props.topicStore.fetchTopics(tab || 'all').then(() => {
@@ -85,8 +150,9 @@ export default class TopicList extends React.Component {
       createdTopics
     } = topicStore
     const {
-      user
+      user,
     } = this.props.appState
+
     return (
       <Container>
         <Helmet>
@@ -109,11 +175,23 @@ export default class TopicList extends React.Component {
                     author: user.info
                   })
                   return (
-                    <TopicListItem
-                      onClick={() => { this.listItemClick(topic) }}
-                      topic={topic}
-                      key={topic.id}
-                    />
+                    <ListItem button onClick={() => { this.listItemClick(topic) }} key={topic.id}>
+                      <Avatar src={topic.author.avatar_url} />
+                      <ListItemText
+                        primary={<StyledPrimary topic={topic} />}
+                        secondary={(
+                          <StyledSecondary
+                            topic={Object.assign({}, topic, {
+                              reply_count: 0,
+                              visit_count: 0,
+                              author: {
+                                loginname: user.info.loginName,
+                              },
+                            })}
+                          />
+                        )}
+                      />
+                    </ListItem>
                   )
                 })
               }
@@ -124,11 +202,13 @@ export default class TopicList extends React.Component {
         <List>
           {
             topicList.map(topic => (
-              <TopicListItem
-                onClick={() => { this.listItemClick(topic) }}
-                topic={topic}
-                key={topic.id}
-              />
+              <ListItem button onClick={() => { this.listItemClick(topic) }} key={topic.id}>
+                <Avatar src={topic.author.avatar_url} />
+                <ListItemText
+                  primary={<StyledPrimary topic={topic} />}
+                  secondary={<StyledSecondary topic={topic} />}
+                />
+              </ListItem>
             ))
           }
         </List>
@@ -154,9 +234,11 @@ export default class TopicList extends React.Component {
 }
 
 TopicList.wrappedComponent.propTypes = {
-  appState: PropTypes.instanceOf(AppState).isRequired,
+  appState: PropTypes.object.isRequired,
   topicStore: PropTypes.object.isRequired
 }
 TopicList.propTypes = {
   location: PropTypes.object.isRequired
 }
+
+export default TopicList

@@ -1,5 +1,5 @@
 import React from 'react'
-import SimpleMDE from 'react-simplemde-editor'
+// import SimpleMDE from 'react-simplemde-editor'
 import PropTypes from 'prop-types'
 import {
   inject,
@@ -124,7 +124,7 @@ class TopicCreate extends React.Component {
             onChange={this.handleTitleChange}
             fullWidth
           />
-          <SimpleMDE
+          {/* <SimpleMDE
             onChange={this.handleContentChange}
             value={this.state.newReply}
             options={{
@@ -132,7 +132,7 @@ class TopicCreate extends React.Component {
               spellChecker: false,
               placeholder: '发表你的精彩意见'
             }}
-          />
+          /> */}
           <div>
             {
               Object.keys(tabs).map((tab) => {

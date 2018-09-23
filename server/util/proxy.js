@@ -1,13 +1,25 @@
 const axios = require('axios')
 const qs = require('qs')
 const baseUrl = 'https://cnodejs.org/api/v1'
+
+function getRequest(baseUrl, path, ctx, query, data) {
+  return new Promise((resolve, reject) => {
+    axios(`${baseUrl}${path}`, {
+      method: ctx.request.method,
+      params: query,
+      data: qs.stringify(data),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }).then((resp) => {
+      resolve(resp)
+    }).catch(reject)
+  })
+}
 module.exports = async (ctx, next) => {
   const path = ctx.request.path.slice(4)
-  console.log('path', path)
   const user = ctx.session.user || {}
   const needAccessToken = ctx.request.query.needAccessToken
-  console.log(user)
-  console.log(needAccessToken)
   if(needAccessToken && !user.accesstoken) {
     ctx.status = 401
     ctx.body = {

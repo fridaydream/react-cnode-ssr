@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'mobx-react'
+// import JssProvider from 'react-jss/lib/JssProvider';
 import { AppContainer } from 'react-hot-loader' // eslint-disable-line
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import { lightBlue, pink } from '@material-ui/core/colors'
