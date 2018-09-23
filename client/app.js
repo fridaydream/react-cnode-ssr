@@ -44,7 +44,8 @@ const topicStore = new TopicStore(initialState.topicStore)
 const root = document.getElementById('root')
 const render = (Component) => {
   const hot = !!module.hot
-  const renderMethod = hot ? ReactDOM.render : ReactDOM.render
+  // const renderMethod = hot ? ReactDOM.render : ReactDOM.hydrate
+  const renderMethod = ReactDOM.render // 因为服务端渲染 dangerouslySetInnerHTML 不显示
   renderMethod(
     <AppContainer>
       <Provider appState={appState} topicStore={topicStore}>
