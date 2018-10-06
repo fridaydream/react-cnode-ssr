@@ -8,7 +8,7 @@
 
 > 不一样的地方
 
-1. <font color="red"> express 换成koa(各种不同中间件和async和await的写法)</font>
+1. <font color=#f00> express 换成koa(各种不同中间件和async和await的写法)</font>
 2. webpack升级4
 3. material-ui从beta版升级到3(部分语法变化)
 4. babel从6升到7(为了简化过程，暂时未升级。但是babel未升级，其相应关联的babel扩展包升级了，导致出现各种问题，其中有react-hot-loader/patch，找了好久才找到问题)
