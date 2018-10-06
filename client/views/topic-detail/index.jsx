@@ -87,7 +87,6 @@ class TopicDetail extends React.Component {
       }).catch((err) => {
         console.log(err) // eslint-disable-line
       })
-
   }
   /* eslint-enable */
 
