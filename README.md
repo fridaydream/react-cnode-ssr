@@ -17,7 +17,7 @@
 
 > 服务端渲染过程
 
-![react ssr 流程图](https://raw.githubusercontent.com/fridaydream/blogpic/master/react-ssr.jpeg)
+![react ssr 流程图](https://raw.githubusercontent.com/fridaydream/blogpic/master/js/node/react-ssr/react-ssr.jpeg)
 
 
 ### koa中对开发环境和生产环境中api接口、静态资源请求不同处理
@@ -34,7 +34,7 @@ plugins: [
 ```
 前端接口都是以api开头。通过webpack配置API_BASE，设置接口的前缀，开发环境是空字符串，进行代理到node后台，生产环境是一个绝对路径。这样在ssr，服务端渲染直出页面时在mobx里面直接去调用cnode接口。在node里面是没跨域，在浏览器是有跨域的。
 
-![react ssr 流程图](https://raw.githubusercontent.com/fridaydream/blogpic/master/react-server.jpeg)
+![react ssr 流程图](https://raw.githubusercontent.com/fridaydream/blogpic/master/js/node/react-ssr/react-server.jpeg)
 
 
 
